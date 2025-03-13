@@ -18,28 +18,30 @@ public class Player : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private void Awake()
     {
-        playerInput = GetComponent<PlayerInput>();
+
+        playerInput = GetComponent<PlayerInput>(); 
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
     private void OnEnable()
     {
- 
+
         playerInput.actions["Jump"].started += Jump;
         playerInput.actions["Move"].performed += Move;
         playerInput.actions["Move"].canceled += Move;
         playerInput.actions["Attack"].started += Player_started;
+
         playerInput.deviceLostEvent.AddListener(OnDeviceLost);
         playerInput.deviceRegainedEvent.AddListener(OnDeviceRegainedEvent);
         playerInput.controlsChangedEvent.AddListener(OnControlsChangedEvent);
+
     }
 
     private void Player_started(InputAction.CallbackContext obj)
     {
         anim.SetTrigger("Attack");
     }
-
     private void OnDeviceRegainedEvent(PlayerInput player)
     {
     }
@@ -59,6 +61,7 @@ public class Player : MonoBehaviour
 
     private void Jump(InputAction.CallbackContext obj)
     {
+        Debug.Log("salto");
         rb.AddForce(Vector3.up * jumpForce, ForceMode2D.Impulse);
     }
 
