@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 using UnityEngine.Windows;
 
@@ -33,10 +34,15 @@ public class Player : MonoBehaviour
     [SerializeField] private LayerMask enemigoLayer;
 
     [Header("Combos")]
-    [SerializeField] private float tiempoCombo = 0.5f; 
-    private int indiceCombo = 0; 
-    private float tiempoUltimoAtaque = 0f;
-    private bool enCombo = false; 
+    [SerializeField] private float dañoCombo = 20f;
+    [SerializeField] private int golpesParaCompo = 3;
+
+
+    [Header("Monedas")]
+    [SerializeField] private float monedasRecolectadas =0;
+
+    private int contadorCompo = 0;
+
 
     private float vida;
     private float vidaMaxima = 100f;
@@ -85,6 +91,10 @@ public class Player : MonoBehaviour
     }
 
 
+    internal void coleccionarMonedas(float valor)
+    {
+        monedasRecolectadas += valor;
+    }
     private void Update()
     {
         // Gasto de estamina cuando corre
@@ -147,19 +157,31 @@ public class Player : MonoBehaviour
         //Lanzamos un Raycast
         RaycastHit2D golpe = Physics2D.Raycast(transform.position, spriteRenderer.flipX ? Vector2.left : Vector2.right, rangoAtaque, enemigoLayer);
         //si le damos a un enemigo
-
+        
         if (golpe.collider != null)
         {
-            if (golpe.collider.GetComponent<Enemigo>()) {
+            contadorCompo++;
+            float dañoFinal = dañoAtaque;
+            if (contadorCompo >= golpesParaCompo)
+            {
+                dañoFinal += dañoCombo;
+                contadorCompo = 0; 
+            }
+
+            if (golpe.collider.GetComponent<Enemigo>())
+            {
                 Enemigo enemigo = golpe.collider.GetComponent<Enemigo>();
-                enemigo.TakeDamage(dañoAtaque);
+                enemigo.TakeDamage(dañoFinal);
             }
             if (golpe.collider.GetComponent<BossAI>())
             {
                 BossAI boss = golpe.collider.GetComponent<BossAI>();
-                boss.TakeDamage(dañoAtaque);
+                boss.TakeDamage(dañoFinal);
             }
         }
+
+
+
     }
     private void Move(InputAction.CallbackContext ctx)
     {
@@ -196,6 +218,8 @@ public class Player : MonoBehaviour
         transform.position = checkpoint.position;
         vida = vidaMaxima;
         estaminaActual = estaminaMaxima;
+        //Reiniciamos la escena, para que se reaparezcan todos los enemigos y Boss.
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
     private void UpdateMovement(InputAction.CallbackContext ctx)
     {
@@ -248,4 +272,5 @@ public class Player : MonoBehaviour
         playerInput.actions["Shield"].canceled -= StopShield;
 
     }
+
 }

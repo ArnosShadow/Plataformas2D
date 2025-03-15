@@ -4,15 +4,21 @@ using UnityEngine;
 
 public class TrampaPinchos1 : MonoBehaviour
 {
-    // Start is called before the first frame update
+    [SerializeField] private GameObject flechaPrefab;
+    [SerializeField] private Transform puntoDisparo;
+    [SerializeField] private float intervaloDisparo = 2f;
+
     void Start()
     {
-        
+        StartCoroutine(DispararFlechas());
     }
 
-    // Update is called once per frame
-    void Update()
+    IEnumerator DispararFlechas()
     {
-        
+        while (true)
+        {
+            yield return new WaitForSeconds(intervaloDisparo);
+            Instantiate(flechaPrefab, puntoDisparo.position, Quaternion.identity);
+        }
     }
 }

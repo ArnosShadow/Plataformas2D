@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class BossAI : MonoBehaviour
 {
@@ -46,7 +47,6 @@ public class BossAI : MonoBehaviour
         }
     }
 
-    // 📌 Método para activar al jefe desde el Trigger
     public void Activar()
     {
         estaActivado = true;
@@ -59,7 +59,7 @@ public class BossAI : MonoBehaviour
         Vector2 direccion = (jugadorPosicion.position - transform.position).normalized;
         rb.velocity = new Vector2(direccion.x * speed, rb.velocity.y); 
         
-        spriteRenderer.flipX = (jugadorPosicion.position.x < transform.position.x); // Girar hacia el jugador
+        spriteRenderer.flipX = (jugadorPosicion.position.x < transform.position.x); 
     }
 
     IEnumerator AttackPlayer()
@@ -121,5 +121,11 @@ public class BossAI : MonoBehaviour
         Destroy(gameObject, 2f);
 
         //Has ganado el nivel
+        StartCoroutine(CambiarDeEscena());
+    }
+    IEnumerator CambiarDeEscena()
+    {
+        yield return new WaitForSeconds(2f);
+        SceneManager.LoadScene("Level2");
     }
 }
