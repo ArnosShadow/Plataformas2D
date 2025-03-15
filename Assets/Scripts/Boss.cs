@@ -1,62 +1,97 @@
-using System.Collections;
+ï»¿using System.Collections;
 using UnityEngine;
 
-public class Boss : MonoBehaviour
+public class BossAI : MonoBehaviour
 {
-    [SerializeField]private Transform player;
-    [SerializeField]private float speed = 2f;
-    [SerializeField]private float attackRange = 1.5f;
-    [SerializeField]private int maxHealth = 10;
-    private int currentHealth;
-    private bool segundaFase = false; // Modo segunda fase
-    private bool activarse = false; // Se activa el Boss
+    [SerializeField] private Transform jugadorPosicion;
+    [SerializeField] private Player jugador;
+    [SerializeField] private LayerMask jugadorLayer;
+    [SerializeField] private float speed = 2f;
+    [SerializeField] private float attackRange = 1.5f;
+    [SerializeField] private float maxHealth = 1000f;
+
+    private bool isAttacking = false;
+    private float currentHealth;
+    private bool segundaFase = false; 
+    private bool estaActivado = false;
 
     private Animator anim;
     private SpriteRenderer spriteRenderer;
+    private Rigidbody2D rb;
 
     void Start()
     {
         currentHealth = maxHealth;
-        anim = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody2D>();
+        //anim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     void Update()
     {
-        if (activarse)
+        if (estaActivado)
         {
-            MoveToPlayer();
+            if (jugadorPosicion == null) return;
+
+            float distancia = Vector2.Distance(transform.position, jugadorPosicion.position);
+
+            if (distancia > attackRange)
+            {
+                MoverHaciaJugador();
+            }
+            else
+            {
+                StartCoroutine(AttackPlayer());
+            }
         }
     }
 
-    void MoveToPlayer()
+    // ðŸ“Œ MÃ©todo para activar al jefe desde el Trigger
+    public void Activar()
     {
-        if (player == null) return;
+        estaActivado = true;
+        //anim.SetTrigger("Awaken");
+        Debug.Log("El jefe ha despertado!");
+    }
 
-        float distance = Vector2.Distance(transform.position, player.position);
-
-        if (distance > attackRange)
-        {
-            transform.position = Vector2.MoveTowards(transform.position, player.position, speed * Time.deltaTime);
-            spriteRenderer.flipX = (player.position.x < transform.position.x);
-        }
-        else
-        {
-            StartCoroutine(AttackPlayer());
-        }
+    void MoverHaciaJugador()
+    {
+        Vector2 direccion = (jugadorPosicion.position - transform.position).normalized;
+        rb.velocity = new Vector2(direccion.x * speed, rb.velocity.y); 
+        
+        spriteRenderer.flipX = (jugadorPosicion.position.x < transform.position.x); // Girar hacia el jugador
     }
 
     IEnumerator AttackPlayer()
     {
-        anim.SetTrigger("Attack");
-        yield return new WaitForSeconds(1f); // Tiempo del ataque
-        if (Vector2.Distance(transform.position, player.position) <= attackRange)
+        if (isAttacking) yield break;
+        isAttacking = true;
+
+
+        spriteRenderer.flipX = jugadorPosicion.position.x < transform.position.x;
+
+        yield return new WaitForSeconds(0.5f);
+
+
+        Vector2 origenRaycast = new Vector2(transform.position.x, transform.position.y - 0.5f);
+        Vector2 direccionRaycast = (jugadorPosicion.position - (Vector3)origenRaycast).normalized;
+
+        Debug.DrawRay(origenRaycast, direccionRaycast * attackRange, Color.red, 1.0f);
+
+        RaycastHit2D golpe = Physics2D.Raycast(origenRaycast, direccionRaycast, attackRange, jugadorLayer);
+
+        if (golpe.collider != null && golpe.collider.CompareTag("Player"))
         {
-            //player.GetComponent<PlayerHealth>()?.TakeDamage(segundaFase ? 2 : 1); // Hace más daño si está en modo furia
+            jugador.TakeDamage(segundaFase ? 10 : 5); 
         }
+
+        yield return new WaitForSeconds(1.5f); 
+        isAttacking = false;
     }
 
-    public void TakeDamage(int damage)
+
+
+    public void TakeDamage(float damage)
     {
         currentHealth -= damage;
         Debug.Log("Vida del jefe: " + currentHealth);
@@ -67,31 +102,24 @@ public class Boss : MonoBehaviour
         }
         else if (currentHealth <= maxHealth / 2 && !segundaFase)
         {
-            EnrageMode();
+            ActivarSegundaFase();
         }
     }
 
-    void EnrageMode()
+    void ActivarSegundaFase()
     {
         segundaFase = true;
-        speed *= 1.5f; // Se mueve más rápido
-        Debug.Log("El jefe ha entrado en modo furia!");
-        anim.SetBool("IsEnraged", true);
+        speed *= 1.5f; // Aumenta la velocidad en la segunda fase
+        Debug.Log("Â¡El Boss ha entrado en la segunda fase!");
+        //anim.SetBool("IsEnraged", true);
     }
 
     void Die()
     {
         Debug.Log("Jefe derrotado");
-        anim.SetTrigger("Die");
+        //anim.SetTrigger("Die");
         Destroy(gameObject, 2f);
-    }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Player"))
-        {
-            activarse = true; // Activa la pelea cuando el jugador entra en el Trigger
-            Debug.Log("El jefe ha despertado!");
-        }
+        //Has ganado el nivel
     }
 }

@@ -6,13 +6,13 @@
             "id": "74be00e6-861c-42ee-90b9-c16541fc95ab",
             "actions": [
                 {
-                    "name": "New action",
-                    "type": "Button",
+                    "name": "Correr",
+                    "type": "Value",
                     "id": "e4ca49e3-1223-4a01-bc5f-55b162eb86d6",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Move",
@@ -55,11 +55,11 @@
                 {
                     "name": "",
                     "id": "6d87b781-3269-4bd9-a423-40b7ba42201c",
-                    "path": "",
+                    "path": "<Keyboard>/leftShift",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "New action",
+                    "action": "Correr",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
