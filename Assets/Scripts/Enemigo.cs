@@ -21,15 +21,17 @@ public class Enemigo : MonoBehaviour
 
     private Vector3 Objetivo;
     private SpriteRenderer spriteRenderer;
-    //private Animator anim;
+    [SerializeField] private Animator anim;
     private bool movingToB = true;
     private bool isAttacking = false;
+    private Rigidbody2D rb;
 
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        //anim = GetComponent<Animator>();
+        anim = GetComponent<Animator>();
         Objetivo = puntoB.position;
+        rb = GetComponent<Rigidbody2D>();
     }
 
     void Update()
@@ -46,17 +48,17 @@ public class Enemigo : MonoBehaviour
 
         if (Vector2.Distance(transform.position, Objetivo) < 0.1f)
         {
-            if (movingToB)
+            if (!movingToB)
             {
                 Objetivo = puntoA.position;
-                movingToB = false;
-                spriteRenderer.flipX = false;
+                movingToB = true;
+                spriteRenderer.flipX = true;
             }
             else
             {
                 Objetivo = puntoB.position;
-                movingToB = true;
-                spriteRenderer.flipX = true;
+                movingToB = false;
+                spriteRenderer.flipX = false;
             }
         }
     }
@@ -81,13 +83,14 @@ public class Enemigo : MonoBehaviour
 
     IEnumerator AttackPlayer(Player jugador)
     {
-        while (jugador != null && isAttacking == false)
+        if (jugador != null && !isAttacking)
         {
             isAttacking = true;
 
-            //anim.SetBool("isAttacking", true);
+            anim.SetTrigger("Golpear");
 
-            spriteRenderer.flipX = jugador.transform.position.x < transform.position.x;
+            float velocidadAnterior = rb.velocity.x;
+            rb.velocity = Vector2.zero; 
 
             yield return new WaitForSeconds(0.5f); 
 
@@ -100,9 +103,10 @@ public class Enemigo : MonoBehaviour
                 Debug.Log("El enemigo golpeó al jugador.");
             }
 
-            yield return new WaitForSeconds(1.0f); // Cooldown antes del siguiente ataque
-            //anim.SetBool("isAttacking", false);
+            yield return new WaitForSeconds(1.0f);
+
             isAttacking = false;
+            rb.velocity = new Vector2(velocidadAnterior, rb.velocity.y);
         }
     }
 

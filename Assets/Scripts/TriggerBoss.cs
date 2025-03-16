@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TriggerBoss : MonoBehaviour
 {
-    [SerializeField] private BossAI boss; // Asigna el Boss en el Inspector
+    [SerializeField] private Boss boss; // Asigna el Boss en el Inspector
 
     private void OnTriggerEnter2D(Collider2D collision)
     {

@@ -173,9 +173,9 @@ public class Player : MonoBehaviour
                 Enemigo enemigo = golpe.collider.GetComponent<Enemigo>();
                 enemigo.TakeDamage(dañoFinal);
             }
-            if (golpe.collider.GetComponent<BossAI>())
+            if (golpe.collider.GetComponent<Boss>())
             {
-                BossAI boss = golpe.collider.GetComponent<BossAI>();
+                Boss boss = golpe.collider.GetComponent<Boss>();
                 boss.TakeDamage(dañoFinal);
             }
         }
@@ -212,15 +212,25 @@ public class Player : MonoBehaviour
         }
     }
 
-    void Die()
+    private void Die()
     {
+        anim.SetTrigger("Muerto");
         Debug.Log("Has Muerto");
+
+        StartCoroutine(EsperarMuerte());
+    }
+
+    IEnumerator EsperarMuerte()
+    {
+        yield return new WaitForSeconds(1f);
+
         transform.position = checkpoint.position;
         vida = vidaMaxima;
         estaminaActual = estaminaMaxima;
-        //Reiniciamos la escena, para que se reaparezcan todos los enemigos y Boss.
+
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
+
     private void UpdateMovement(InputAction.CallbackContext ctx)
     {
         input = ctx.ReadValue<Vector2>();

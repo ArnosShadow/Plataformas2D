@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class BossAI : MonoBehaviour
+public class Boss : MonoBehaviour
 {
     [SerializeField] private Transform jugadorPosicion;
     [SerializeField] private Player jugador;
@@ -10,6 +10,8 @@ public class BossAI : MonoBehaviour
     [SerializeField] private float speed = 2f;
     [SerializeField] private float attackRange = 1.5f;
     [SerializeField] private float maxHealth = 1000f;
+
+    [SerializeField] private Canvas canvasVictoria;
 
     private bool isAttacking = false;
     private float currentHealth;
@@ -24,7 +26,7 @@ public class BossAI : MonoBehaviour
     {
         currentHealth = maxHealth;
         rb = GetComponent<Rigidbody2D>();
-        //anim = GetComponent<Animator>();
+        anim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
@@ -50,7 +52,7 @@ public class BossAI : MonoBehaviour
     public void Activar()
     {
         estaActivado = true;
-        //anim.SetTrigger("Awaken");
+        anim.SetBool("Andar", true);
         Debug.Log("El jefe ha despertado!");
     }
 
@@ -67,8 +69,13 @@ public class BossAI : MonoBehaviour
         if (isAttacking) yield break;
         isAttacking = true;
 
+        anim.SetBool("Andar", false);
+        anim.SetTrigger("Golpear");
 
         spriteRenderer.flipX = jugadorPosicion.position.x < transform.position.x;
+
+        float velocidadAnterior = rb.velocity.x;
+        rb.velocity = Vector2.zero;
 
         yield return new WaitForSeconds(0.5f);
 
@@ -87,6 +94,9 @@ public class BossAI : MonoBehaviour
 
         yield return new WaitForSeconds(1.5f); 
         isAttacking = false;
+
+        anim.SetBool("Andar", true);
+        rb.velocity = new Vector2(velocidadAnterior, rb.velocity.y);
     }
 
 
@@ -111,21 +121,21 @@ public class BossAI : MonoBehaviour
         segundaFase = true;
         speed *= 1.5f; // Aumenta la velocidad en la segunda fase
         Debug.Log("¡El Boss ha entrado en la segunda fase!");
-        //anim.SetBool("IsEnraged", true);
+        //anim.SetBool("segundaFase", true);
     }
 
     void Die()
     {
         Debug.Log("Jefe derrotado");
         //anim.SetTrigger("Die");
-        Destroy(gameObject, 2f);
-
+        Destroy(gameObject, 1f);
         //Has ganado el nivel
         StartCoroutine(CambiarDeEscena());
     }
     IEnumerator CambiarDeEscena()
     {
         yield return new WaitForSeconds(2f);
-        SceneManager.LoadScene("Level2");
+
+        canvasVictoria.enabled = true;
     }
 }
