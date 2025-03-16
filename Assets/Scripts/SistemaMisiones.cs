@@ -1,63 +1,67 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MissionSystem : MonoBehaviour
+public class Misiones : MonoBehaviour
 {
-    public static MissionSystem instance = null;
+    public static Misiones instance = null;
 
     [Header("Objetivos de la misión")]
-    [SerializedField] private int monedasObjetivo = 5;
-    [SerializedField] private int enemigosObjetivo = 3;
+    [SerializeField] private int monedasObjetivo = 5;
+    [SerializeField] private int enemigosObjetivo = 3;
 
-    private int monedasRecolectadas = 0;
-    private int enemigosAsesinados = 0;
+    private float monedasRecolectadas = 0;
+    private float enemigosAsesinados = 0;
     private bool bossDerrotado = false;
 
     [Header("UI de Misiones")]
-    public TextMesh misiones;
+    [SerializeField] private TextMeshProUGUI misiones;
 
     void Awake()
     {
+
         if (instance == null)
+        {
             instance = this;
+        }
+
     }
 
     void Start()
     {
-        UpdateMissionText();
+        Actualizar();
     }
 
     public void CollectCoin()
     {
         monedasRecolectadas++;
-        UpdateMissionText();
+        Actualizar();
         CheckMissionCompletion();
     }
 
     public void KillEnemy()
     {
         enemigosAsesinados++;
-        UpdateMissionText();
+        Actualizar();
         CheckMissionCompletion();
     }
 
     public void KillBoss()
     {
         bossDerrotado = true;
-        UpdateMissionText();
+        Actualizar();
         CheckMissionCompletion();
     }
 
-    void UpdateMissionText()
+    void Actualizar()
     {
-        if (misiones != null)
-        {
-            misiones.text = $"Recoge monedas: {monedasRecolectadas}/{monedasObjetivo}\n" +
+       
+        misiones.text = $"Recoge monedas: {monedasRecolectadas}/{monedasObjetivo}\n" +
                                $"Mata enemigos: {enemigosAsesinados}/{enemigosObjetivo}\n" +
                                $"Mata al Boss: {(bossDerrotado ? "Si" : "No")}";
-        }
+        
     }
 
     void CheckMissionCompletion()
@@ -65,7 +69,6 @@ public class MissionSystem : MonoBehaviour
         if (monedasRecolectadas >= monedasObjetivo && enemigosAsesinados >= enemigosObjetivo && bossDerrotado)
         {
             Debug.Log("¡Todas las misiones completadas!");
-            // Aquí puedes añadir una recompensa, pasar de nivel, etc.
         }
     }
 }

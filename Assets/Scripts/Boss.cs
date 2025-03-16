@@ -11,7 +11,7 @@ public class Boss : MonoBehaviour
     [SerializeField] private float attackRange = 1.5f;
     [SerializeField] private float maxHealth = 1000f;
 
-    [SerializeField] private Canvas canvasVictoria;
+    [SerializeField] private GameObject canvasVictoria;
 
     private bool isAttacking = false;
     private float currentHealth;
@@ -21,9 +21,12 @@ public class Boss : MonoBehaviour
     private Animator anim;
     private SpriteRenderer spriteRenderer;
     private Rigidbody2D rb;
+    [SerializeField] private Misiones misiones;
 
     void Start()
     {
+
+        canvasVictoria.SetActive(false);
         currentHealth = maxHealth;
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
@@ -129,13 +132,14 @@ public class Boss : MonoBehaviour
         Debug.Log("Jefe derrotado");
         //anim.SetTrigger("Die");
         Destroy(gameObject, 1f);
+        misiones.KillBoss();
         //Has ganado el nivel
-        StartCoroutine(CambiarDeEscena());
+        StartCoroutine(CambiarCanvas());
     }
-    IEnumerator CambiarDeEscena()
+    IEnumerator CambiarCanvas()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.5f);
 
-        canvasVictoria.enabled = true;
+        canvasVictoria.SetActive(true);
     }
 }

@@ -25,7 +25,7 @@ public class Enemigo : MonoBehaviour
     private bool movingToB = true;
     private bool isAttacking = false;
     private Rigidbody2D rb;
-
+    [SerializeField] private Misiones misiones;
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -78,6 +78,7 @@ public class Enemigo : MonoBehaviour
         if (vida <= 0)
         {
             Destroy(gameObject);
+            misiones.KillEnemy();
         }
     }
 

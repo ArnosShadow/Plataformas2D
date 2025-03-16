@@ -41,6 +41,8 @@ public class Player : MonoBehaviour
     [Header("Monedas")]
     [SerializeField] private float monedasRecolectadas =0;
 
+  
+
     private int contadorCompo = 0;
 
 
@@ -51,6 +53,7 @@ public class Player : MonoBehaviour
     private Vector2 input;
     private Rigidbody2D rb;
     private Animator anim;
+    [SerializeField] private Misiones misiones ;
     private SpriteRenderer spriteRenderer;
 
     private void Awake()
@@ -91,9 +94,10 @@ public class Player : MonoBehaviour
     }
 
 
-    internal void coleccionarMonedas(float valor)
+    public void coleccionarMonedas(float valor)
     {
         monedasRecolectadas += valor;
+        misiones.CollectCoin();
     }
     private void Update()
     {
