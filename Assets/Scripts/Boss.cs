@@ -9,6 +9,8 @@ public class Boss : MonoBehaviour
     [SerializeField] private LayerMask jugadorLayer;
     [SerializeField] private float speed = 2f;
     [SerializeField] private float attackRange = 1.5f;
+    [SerializeField] private float dañoPrimeraFase = 10;
+    [SerializeField] private float dañoSegundaFase = 15;
     [SerializeField] private float maxHealth = 1000f;
 
     [SerializeField] private GameObject canvasVictoria;
@@ -92,7 +94,7 @@ public class Boss : MonoBehaviour
 
         if (golpe.collider != null && golpe.collider.CompareTag("Player"))
         {
-            jugador.TakeDamage(segundaFase ? 10 : 5); 
+            jugador.TakeDamage(segundaFase ? dañoSegundaFase : dañoPrimeraFase); 
         }
 
         yield return new WaitForSeconds(1.5f); 

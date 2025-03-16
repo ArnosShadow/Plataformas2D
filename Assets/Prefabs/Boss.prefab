@@ -34,7 +34,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2283807046616104457
 MonoBehaviour:
@@ -55,7 +55,11 @@ MonoBehaviour:
     m_Bits: 384
   speed: 2
   attackRange: 5
+  "da\xF1oPrimeraFase": 10
+  "da\xF1oSegundaFase": 15
   maxHealth: 1000
+  canvasVictoria: {fileID: 0}
+  misiones: {fileID: 0}
 --- !u!212 &548970314914170821
 SpriteRenderer:
   m_ObjectHideFlags: 0

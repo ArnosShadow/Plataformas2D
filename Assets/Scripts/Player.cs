@@ -98,6 +98,7 @@ public class Player : MonoBehaviour
     {
         monedasRecolectadas += valor;
         misiones.CollectCoin();
+        AudioManager.Instance.PlayMonedaSound();
     }
     private void Update()
     {
@@ -158,6 +159,7 @@ public class Player : MonoBehaviour
     {
         //Realizamos la animacion
         anim.SetTrigger("Attack");
+        AudioManager.Instance.PlayAtaqueSound();
         //Lanzamos un Raycast
         RaycastHit2D golpe = Physics2D.Raycast(transform.position, spriteRenderer.flipX ? Vector2.left : Vector2.right, rangoAtaque, enemigoLayer);
         //si le damos a un enemigo
@@ -220,6 +222,7 @@ public class Player : MonoBehaviour
     {
         anim.SetTrigger("Muerto");
         Debug.Log("Has Muerto");
+        AudioManager.Instance.PlayMuerteSound();
 
         StartCoroutine(EsperarMuerte());
     }

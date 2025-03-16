@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class MangerEscenas : MonoBehaviour
 {
-    public static MangerEscenas instance = null;
+    private static MangerEscenas instance = null;
     void Awake()
     {
 
@@ -15,6 +15,7 @@ public class MangerEscenas : MonoBehaviour
         }
 
     }
+
     //Método asociado al click del boton de Inicio
     public void OnPlayButtonClicked()
     {
